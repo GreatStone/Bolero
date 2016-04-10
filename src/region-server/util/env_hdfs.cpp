@@ -68,8 +68,8 @@ namespace bolero{
     };
     class HDFSWritableFile : public WritableFile {
     private:
-        std::string fileaddr_;
         hdfsFS fs_;
+        std::string fileaddr_;
         hdfsFile hfile_;
     public:
         explicit HDFSWritableFile(hdfsFS fs, std::string fileaddr, bool appendMode = false):
@@ -122,6 +122,9 @@ namespace bolero{
                 return ret;
             }
             int s = hdfsHSync(fs_, hfile_);
+            if (s != 0) {
+                return IOError(fileaddr_, errno);
+            }
             return ret;
         }
         bool isAvailable() const {
@@ -350,6 +353,10 @@ namespace bolero{
     }
     EnvHDFS* NewEnvHDFS(const std::string& fname) {
         EnvHDFS* ret = new EnvHDFS(fname);
+        if (!ret->init()) {
+            delete ret;
+            return nullptr;
+        }
         return ret;
     }
 }

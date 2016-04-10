@@ -31,9 +31,10 @@ namespace bolero {
         field->assign(pos, field_size);
         remain -= field_size;
         pos += field_size;
-        if (remain < 0) {
+        if (remain <= 0) {
             return false;
         }
         user_key->assign(pos, remain);
+        return true;
     }
 }//namespace bolero

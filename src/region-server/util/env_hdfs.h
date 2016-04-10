@@ -7,21 +7,25 @@ namespace bolero {
     using namespace ::leveldb;
     class EnvHDFS : public Env {
     public:
-        explicit EnvHDFS(const std::string& fsname) : fsname_(fsname) {
+        explicit EnvHDFS(const std::string& fsname) : fsname_(fsname), fs_(nullptr),
+                                                      dftEnv_(nullptr){ }
+
+        bool init() {
             dftEnv_ = Env::Default();
-            char* host = new char[fsname.length() + 1];
+            char* host = new char[fsname_.length() + 1];
             host[0] = 0;
             int port = -1;
-            int s = sscanf(fsname.data(), "hdfs://%[^:]:%d", host, &port);
+            int s = sscanf(fsname_.data(), "hdfs://%[^:]:%d", host, &port);
             if (s < 2) {
                 delete host;
                 fs_ = nullptr;
-                return;
+                return false;
             }
             assert(host[0] != 0);
             assert(port > 0);
             fs_ = hdfsConnect(host, port);
             delete host;
+            return (fs_ != nullptr);
         }
 
         virtual ~EnvHDFS() {
@@ -80,8 +84,8 @@ namespace bolero {
             return static_cast<uint64_t>(pthread_self());
         }
     private:
-        hdfsFS fs_;
         std::string fsname_;
+        hdfsFS fs_;
         Env* dftEnv_;
     };
     extern EnvHDFS* NewEnvHDFS(const std::string& fsname);
