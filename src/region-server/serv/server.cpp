@@ -32,12 +32,12 @@ namespace bolero {
     inline leveldb::WriteOptions Server::default_write_options() {
         return config_.default_wopt();
     }
-    inline leveldb::Status Server::hget(Slice& user_key, Slice& field, std::string* value) {
+    inline leveldb::Status Server::hget(leveldb::Slice user_key, leveldb::Slice field, std::string* value) {
         std::string hash_key;
         encode_hash_key(user_key, field, &hash_key);
         return db->Get(default_read_options(), hash_key, value);
     }
-    leveldb::Status Server::hmget(Slice& user_key, const std::vector<Slice> fields,
+    leveldb::Status Server::hmget(leveldb::Slice user_key, const std::vector<Slice>& fields,
                           std::vector<std::string>* value) {
         std::string cur;
         leveldb::Status s;
@@ -50,13 +50,13 @@ namespace bolero {
         }
         return leveldb::Status::OK();
     }
-    leveldb::Status Server::hset(Slice& user_key, Slice& field, Slice& value) {
+    leveldb::Status Server::hset(leveldb::Slice user_key, leveldb::Slice field, leveldb::Slice value) {
         std::string hash_key;
         encode_hash_key(user_key, field, &hash_key);
         return db->Put(default_write_options(), hash_key, value);
     }
-    leveldb::Status Server::hmset(Slice& user_key,
-                          const std::vector<std::pair<leveldb::Slice, leveldb::Slice>> kvs) {
+    leveldb::Status Server::hmset(leveldb::Slice user_key,
+                          const std::vector<std::pair<leveldb::Slice, leveldb::Slice>>& kvs) {
         std::string cur;
         leveldb::Status s;
         for (auto kv: kvs) {

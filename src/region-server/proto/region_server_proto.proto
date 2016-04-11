@@ -1,0 +1,38 @@
+package bolero.proto;
+option cc_generic_services = true;
+
+message HashRequest {
+    enum OpType {
+        HGET = 0;
+        HMGET = 1;
+        HSET = 2;
+        HMSET = 3;
+    }
+    optional OpType operation = 1;
+    optional string user_key = 2;
+    //encode fields and values in.
+    optional bytes req_batch = 3;
+}
+
+message HashResponse {
+    enum ResultType {
+        HGET = 0;
+        HMGET = 1;
+        HSET = 2;
+        HMSET = 3;
+    }
+    optional ResultType operation = 1;
+    optional string user_key = 2;
+    //encode fields and results in.
+    optional bytes res_batch = 3;
+    enum ErrorCode {
+        THREAD_ERROR = 0;
+        BAD_ARGS = 1;
+        DB_ERROR = 2;
+    }
+    optional ErrorCode err = 4;
+}
+
+service RegionServerProto {
+    rpc hash_op(HashRequest) returns (HashResponse);
+}

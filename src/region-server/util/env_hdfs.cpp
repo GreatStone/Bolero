@@ -7,8 +7,6 @@
 #include <stdint.h>
 #include <sys/time.h>
 
-#define debug_log printf("error %d\n",__LINE__);
-
 namespace bolero{
     using namespace ::leveldb;
     static Status IOError(const std::string& context, int err_number) {
@@ -34,7 +32,6 @@ namespace bolero{
             while (remain > 0) {
                 size_t r = hdfsRead(fs_, hfile_, pos, remain);
                 if (r < 0) {
-                    debug_log
                     return IOError(fileaddr_, errno);
                 } else if (r == 0) {
                     break;
@@ -49,7 +46,6 @@ namespace bolero{
                             char* scratch) const override {
             size_t r = hdfsPread(fs_, hfile_, offset, scratch, n);
             if (r < 0) {
-                debug_log
                 return IOError(fileaddr_, errno);
             }
             *result = Slice(scratch, r);
@@ -57,7 +53,6 @@ namespace bolero{
         }
         virtual Status Skip(uint64_t n) override {
             if (hdfsSeek(fs_, hfile_, n + offset_)) {
-                debug_log
                 return IOError(fileaddr_, errno);
             }
             return Status::OK();
@@ -74,7 +69,6 @@ namespace bolero{
     public:
         explicit HDFSWritableFile(hdfsFS fs, std::string fileaddr, bool appendMode = false):
             fs_(fs), fileaddr_(fileaddr) {
-            printf("touch %s\n", fileaddr.data());
             if (appendMode) {
                 hfile_ = hdfsOpenFile(fs, fileaddr.data(), O_WRONLY | O_APPEND, 0, 0, 0);
             } else {
@@ -82,26 +76,21 @@ namespace bolero{
             }
         }
         virtual ~HDFSWritableFile() {
-            printf("release %s\n", fileaddr_.data());
             if (hfile_ != nullptr) {
                 Close();
             }
         }
         virtual Status Append(const Slice& data) override {
-            printf("append %s\n", fileaddr_.data());
             assert(hfile_ != nullptr);
             size_t w = hdfsWrite(fs_, hfile_, reinterpret_cast<const void*>(data.data()), data.size());
             if (w < data.size()) {
-                debug_log
                 return IOError(fileaddr_, errno);
             }
             return Status::OK();
         }
         virtual Status Close() override {
-            printf("close %s\n", fileaddr_.data());
             assert(hfile_ != nullptr);
             if (hdfsCloseFile(fs_, hfile_) != 0) {
-                debug_log
                 return IOError(fileaddr_, errno);
             }
             hfile_ = nullptr;
@@ -110,7 +99,6 @@ namespace bolero{
         virtual Status Flush() override {
             assert(hfile_ != nullptr);
             if (hdfsFlush(fs_, hfile_) != 0) {
-                debug_log
                 return IOError(fileaddr_, errno);
             }
             return Status::OK();
@@ -216,7 +204,6 @@ namespace bolero{
         if (rf == nullptr || !rf->isAvailable()) {
             delete rf;
             *result = nullptr;
-            debug_log
             return IOError(fname, errno);
         }
         *result = dynamic_cast<SequentialFile*>(rf);
@@ -229,7 +216,6 @@ namespace bolero{
         if (file == nullptr || !file->isAvailable()) {
             delete file;
             *result = nullptr;
-            debug_log
             return IOError(fname, errno);
         }
         *result = dynamic_cast<RandomAccessFile*>(file);
@@ -242,7 +228,6 @@ namespace bolero{
         if (file == nullptr || !file->isAvailable()) {
             delete file;
             *result = nullptr;
-            debug_log
             return IOError(fname, errno);
         }
         *result = dynamic_cast<WritableFile*>(file);
@@ -255,7 +240,6 @@ namespace bolero{
         if (file == nullptr || file->isAvailable()) {
             delete file;
             *result = nullptr;
-            debug_log
             return IOError(fname, errno);
         }
         *result = dynamic_cast<WritableFile*>(file);
@@ -267,13 +251,11 @@ namespace bolero{
     Status EnvHDFS::GetChildren(const std::string& dir,
                                std::vector<std::string>* result) {
         if (!FileExists(dir)) {
-            debug_log
             return IOError(dir, errno);
         }
         int count = 0;
         hdfsFileInfo* allinfo = hdfsListDirectory(fs_, dir.data(), &count);
         if (allinfo == nullptr || count < 0) {
-            debug_log
             return IOError(dir, errno);
         }
         for (int i = 0; i < count; ++i) {
@@ -287,21 +269,18 @@ namespace bolero{
     }
     Status EnvHDFS::DeleteFile(const std::string& fname) {
         if (hdfsDelete(fs_, fname.data(), 0)) {
-            debug_log
             return IOError(fname, errno);
         }
         return Status::OK();
     }
     Status EnvHDFS::CreateDir(const std::string& dirname) {
         if (hdfsCreateDirectory(fs_, dirname.data())) {
-            debug_log
             return IOError(dirname, errno);
         }
         return Status::OK();
     }
     Status EnvHDFS::DeleteDir(const std::string& dirname) {
         if (hdfsDelete(fs_, dirname.data(), 1)) {
-            debug_log
             return IOError(dirname, errno);
         }
         return Status::OK();
@@ -313,14 +292,12 @@ namespace bolero{
             hdfsFreeFileInfo(info, 1);
             return Status::OK();
         }
-        debug_log
         return IOError(fname, errno);
     }
     Status EnvHDFS::RenameFile(const std::string& src,
                               const std::string& target) {
         DeleteFile(target);
         if (hdfsRename(fs_, src.data(), target.data())) {
-            debug_log
             return IOError(src, errno);
         }
         return Status::OK();
@@ -338,14 +315,12 @@ namespace bolero{
         if (file == nullptr || !file->isAvailable()) {
             delete file;
             *result = nullptr;
-            debug_log
             return IOError(fname, errno);
         }
         HDFSLogger* logger = new HDFSLogger(fs_, file, &EnvHDFS::gettid);
         if (logger == nullptr) {
             delete file;
             delete logger;
-            debug_log
             return IOError(fname, errno);
         }
         *result = dynamic_cast<Logger*>(logger);

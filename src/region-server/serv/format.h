@@ -11,6 +11,7 @@ namespace bolero {
         //key value type just for debug/internal.
         const static char DATA_KV = 'k';
         const static char DATA_LINK = 'l';
+        const static char DATA_NULL = 'n';
         const static char META_RAW = 'm';
     };
 

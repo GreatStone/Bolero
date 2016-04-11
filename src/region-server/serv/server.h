@@ -15,12 +15,12 @@ namespace bolero {
         leveldb::ReadOptions default_read_options();
         leveldb::WriteOptions default_write_options();
 
-        leveldb::Status hget(leveldb::Slice& user_key, leveldb::Slice& field, std::string* value);
-        leveldb::Status hmget(leveldb::Slice& user_key, const std::vector<leveldb::Slice> fields,
+        leveldb::Status hget(leveldb::Slice user_key, leveldb::Slice field, std::string* value);
+        leveldb::Status hmget(leveldb::Slice user_key, const std::vector<leveldb::Slice>& fields,
                               std::vector<std::string>* value);
 
-        leveldb::Status hset(leveldb::Slice& user_key, leveldb::Slice& field, leveldb::Slice& value);
-        leveldb::Status hmset(leveldb::Slice& user_key, const std::vector<std::pair<leveldb::Slice, leveldb::Slice>> kvs);
+        leveldb::Status hset(leveldb::Slice user_key, leveldb::Slice field, leveldb::Slice value);
+        leveldb::Status hmset(leveldb::Slice user_key, const std::vector<std::pair<leveldb::Slice, leveldb::Slice>>& kvs);
 
         leveldb::DB* db;
         leveldb::Env* cur_env;
