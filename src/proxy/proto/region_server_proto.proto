@@ -9,13 +9,13 @@ message HashRequest {
         HMSET = 3;
     }
     optional OpType operation = 1;
-    optional string user_key = 2;
+    optional bytes user_key = 2;
     //encode fields and values in.
     optional bytes req_batch = 3;
 }
 
 message HashResponse {
-    optional string user_key = 1;
+    optional bytes user_key = 1;
     //encode fields and results in.
     optional bytes res_batch = 2;
     enum ErrorCode {

@@ -21,14 +21,16 @@ int main(int argc, char** argv) {
         printf("Fail to init center of RPC.\n");
         return -1;
     }
-    for (int i = 0; i < 100; ++i) {
-        std::string key = "test";
-        key.append(reinterpret_cast<char*>(&i), sizeof(int));
-        int e = i * i;
-        center.hset(key, "a", leveldb::Slice(reinterpret_cast<char*>(&e), sizeof(int)));
+    for (std::string key : {"testa", "testb", "testc"}) {
+        for (int i = 0; i < 1000; ++i) {
+            std::string cur = key;
+            cur.append(reinterpret_cast<char*>(&i), sizeof(int));
+            int e = i * 3;
+            center.hset(cur, "a", leveldb::Slice(reinterpret_cast<char*>(&e), sizeof(int)));
+        }
     }
-    for (int i = 0; i < 100; ++i) {
-        std::string key = "test";
+    for (int i = 0; i < 1000; ++i) {
+        std::string key = "testa";
         key.append(reinterpret_cast<char*>(&i), sizeof(int));
         std::string e;
         center.hget(key, "a", &e);

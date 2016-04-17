@@ -32,6 +32,9 @@ namespace bolero {
         bool hset(leveldb::Slice user_key, leveldb::Slice field,
                   leveldb::Slice value, ::google::protobuf::Closure* done = nullptr,
                   int64_t time_out = 10000);
+        bool hdel(leveldb::Slice user_key, leveldb::Slice field,
+                  ::google::protobuf::Closure* done = nullptr,
+                  int64_t time_out = 10000);
     private:
         static ProxyConfig* config_;
         std::string server_host_;

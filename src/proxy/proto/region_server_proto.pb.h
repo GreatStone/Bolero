@@ -170,14 +170,14 @@ class HashRequest : public ::google::protobuf::Message {
   inline ::bolero::proto::HashRequest_OpType operation() const;
   inline void set_operation(::bolero::proto::HashRequest_OpType value);
 
-  // optional string user_key = 2;
+  // optional bytes user_key = 2;
   inline bool has_user_key() const;
   inline void clear_user_key();
   static const int kUserKeyFieldNumber = 2;
   inline const ::std::string& user_key() const;
   inline void set_user_key(const ::std::string& value);
   inline void set_user_key(const char* value);
-  inline void set_user_key(const char* value, size_t size);
+  inline void set_user_key(const void* value, size_t size);
   inline ::std::string* mutable_user_key();
   inline ::std::string* release_user_key();
   inline void set_allocated_user_key(::std::string* user_key);
@@ -301,14 +301,14 @@ class HashResponse : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional string user_key = 1;
+  // optional bytes user_key = 1;
   inline bool has_user_key() const;
   inline void clear_user_key();
   static const int kUserKeyFieldNumber = 1;
   inline const ::std::string& user_key() const;
   inline void set_user_key(const ::std::string& value);
   inline void set_user_key(const char* value);
-  inline void set_user_key(const char* value, size_t size);
+  inline void set_user_key(const void* value, size_t size);
   inline ::std::string* mutable_user_key();
   inline ::std::string* release_user_key();
   inline void set_allocated_user_key(::std::string* user_key);
@@ -446,7 +446,7 @@ inline void HashRequest::set_operation(::bolero::proto::HashRequest_OpType value
   operation_ = value;
 }
 
-// optional string user_key = 2;
+// optional bytes user_key = 2;
 inline bool HashRequest::has_user_key() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -479,7 +479,7 @@ inline void HashRequest::set_user_key(const char* value) {
   }
   user_key_->assign(value);
 }
-inline void HashRequest::set_user_key(const char* value, size_t size) {
+inline void HashRequest::set_user_key(const void* value, size_t size) {
   set_has_user_key();
   if (user_key_ == &::google::protobuf::internal::kEmptyString) {
     user_key_ = new ::std::string;
@@ -590,7 +590,7 @@ inline void HashRequest::set_allocated_req_batch(::std::string* req_batch) {
 
 // HashResponse
 
-// optional string user_key = 1;
+// optional bytes user_key = 1;
 inline bool HashResponse::has_user_key() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -623,7 +623,7 @@ inline void HashResponse::set_user_key(const char* value) {
   }
   user_key_->assign(value);
 }
-inline void HashResponse::set_user_key(const char* value, size_t size) {
+inline void HashResponse::set_user_key(const void* value, size_t size) {
   set_has_user_key();
   if (user_key_ == &::google::protobuf::internal::kEmptyString) {
     user_key_ = new ::std::string;

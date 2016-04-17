@@ -9,7 +9,6 @@ namespace bolero {
     public:
         explicit EnvHDFS(const std::string& fsname) : fsname_(fsname), fs_(nullptr),
                                                       dftEnv_(nullptr){ }
-
         bool init() {
             dftEnv_ = Env::Default();
             char* host = new char[fsname_.length() + 1];
@@ -31,6 +30,7 @@ namespace bolero {
         virtual ~EnvHDFS() {
             fprintf(stderr, "Destroying HdfsEnv::Default()\n");
             hdfsDisconnect(fs_);
+            delete dftEnv_;
         }
 
         virtual Status NewSequentialFile(const std::string& fname,

@@ -5,10 +5,16 @@
 
 #include <unistd.h>
 #include <stdint.h>
+#include <string>
 #include <sys/time.h>
+#include <stdio.h>
+#include <string.h>
+#include "sofa/pbrpc/pbrpc.h"
+#include <errno.h>
 
 namespace bolero{
     using namespace ::leveldb;
+
     static Status IOError(const std::string& context, int err_number) {
         return Status::IOError(context, strerror(err_number));
     }
@@ -261,6 +267,7 @@ namespace bolero{
         for (int i = 0; i < count; ++i) {
             char* tmp = rindex(allinfo[i].mName, '/');
             if (tmp != nullptr) {
+                ++tmp;
                 result->emplace_back(std::string(tmp));
             }
         }

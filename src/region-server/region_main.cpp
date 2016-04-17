@@ -5,29 +5,25 @@
 #include <string>
 
 #include "serv/server.h"
+#include "serv/region_server.h"
 
-using namespace bolero;
-using namespace leveldb;
-int main() {
-    Server server;
-    assert(server.init("/home/vagrant/gra_pro/Bolero/conf/example.conf"));
-    std::string fielda = "a";
-    std::string fieldb = "b";
-    Slice key;
-    for (int i = 0; i < 1000; ++i) {
-        int e = i + 100;
-        std::vector<std::pair<leveldb::Slice, leveldb::Slice>> values;
-        values.push_back(std::make_pair(fielda, Slice(reinterpret_cast<char*>(&i), sizeof(int))));
-        values.push_back(std::make_pair(fieldb, Slice(reinterpret_cast<char*>(&e), sizeof(int))));
-        assert(server.hmset(Slice(reinterpret_cast<char*>(&i), sizeof(int)), values).ok());
+int main(int argc, char** argv) {
+    if (argc < 2) {
+        printf("Usage: %s [config-file]\n", argv[0]);
+        return -1;
     }
-    for (int i = 0; i < 10; ++i) {
-        std::vector<Slice> fields;
-        fields.push_back(fielda);
-        fields.push_back(fieldb);
-        std::vector<std::string> values;
-        assert(server.hmget(Slice(reinterpret_cast<char*>(&i), sizeof(int)), fields, &values).ok());
-        printf("key: %d a: %d b: %d\n", i, *(int*)values[0].data(), *(int*)values[1].data());
+    bolero::Server server;
+    if (!server.init(argv[1])) {
+        printf("Fail to init local server\n");
+        return -1;
     }
+    bolero::RegionServer region;
+    region.set_local_server(&server);
+    if (!region.init()) {
+        printf("Fail to init region server\n");
+        return -1;
+    }
+    region.server_run();
+    
     return 0;
 }

@@ -60,34 +60,14 @@ inline bool HashRequest_OpType_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<HashRequest_OpType>(
     HashRequest_OpType_descriptor(), name, value);
 }
-enum HashResponse_ResultType {
-  HashResponse_ResultType_HGET = 0,
-  HashResponse_ResultType_HMGET = 1,
-  HashResponse_ResultType_HSET = 2,
-  HashResponse_ResultType_HMSET = 3
-};
-bool HashResponse_ResultType_IsValid(int value);
-const HashResponse_ResultType HashResponse_ResultType_ResultType_MIN = HashResponse_ResultType_HGET;
-const HashResponse_ResultType HashResponse_ResultType_ResultType_MAX = HashResponse_ResultType_HMSET;
-const int HashResponse_ResultType_ResultType_ARRAYSIZE = HashResponse_ResultType_ResultType_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* HashResponse_ResultType_descriptor();
-inline const ::std::string& HashResponse_ResultType_Name(HashResponse_ResultType value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    HashResponse_ResultType_descriptor(), value);
-}
-inline bool HashResponse_ResultType_Parse(
-    const ::std::string& name, HashResponse_ResultType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<HashResponse_ResultType>(
-    HashResponse_ResultType_descriptor(), name, value);
-}
 enum HashResponse_ErrorCode {
-  HashResponse_ErrorCode_THREAD_ERROR = 0,
-  HashResponse_ErrorCode_BAD_ARGS = 1,
-  HashResponse_ErrorCode_DB_ERROR = 2
+  HashResponse_ErrorCode_OK = 0,
+  HashResponse_ErrorCode_THREAD_ERROR = 1,
+  HashResponse_ErrorCode_BAD_ARGS = 2,
+  HashResponse_ErrorCode_DB_ERROR = 3
 };
 bool HashResponse_ErrorCode_IsValid(int value);
-const HashResponse_ErrorCode HashResponse_ErrorCode_ErrorCode_MIN = HashResponse_ErrorCode_THREAD_ERROR;
+const HashResponse_ErrorCode HashResponse_ErrorCode_ErrorCode_MIN = HashResponse_ErrorCode_OK;
 const HashResponse_ErrorCode HashResponse_ErrorCode_ErrorCode_MAX = HashResponse_ErrorCode_DB_ERROR;
 const int HashResponse_ErrorCode_ErrorCode_ARRAYSIZE = HashResponse_ErrorCode_ErrorCode_MAX + 1;
 
@@ -190,14 +170,14 @@ class HashRequest : public ::google::protobuf::Message {
   inline ::bolero::proto::HashRequest_OpType operation() const;
   inline void set_operation(::bolero::proto::HashRequest_OpType value);
 
-  // optional string user_key = 2;
+  // optional bytes user_key = 2;
   inline bool has_user_key() const;
   inline void clear_user_key();
   static const int kUserKeyFieldNumber = 2;
   inline const ::std::string& user_key() const;
   inline void set_user_key(const ::std::string& value);
   inline void set_user_key(const char* value);
-  inline void set_user_key(const char* value, size_t size);
+  inline void set_user_key(const void* value, size_t size);
   inline ::std::string* mutable_user_key();
   inline ::std::string* release_user_key();
   inline void set_allocated_user_key(::std::string* user_key);
@@ -293,33 +273,8 @@ class HashResponse : public ::google::protobuf::Message {
 
   // nested types ----------------------------------------------------
 
-  typedef HashResponse_ResultType ResultType;
-  static const ResultType HGET = HashResponse_ResultType_HGET;
-  static const ResultType HMGET = HashResponse_ResultType_HMGET;
-  static const ResultType HSET = HashResponse_ResultType_HSET;
-  static const ResultType HMSET = HashResponse_ResultType_HMSET;
-  static inline bool ResultType_IsValid(int value) {
-    return HashResponse_ResultType_IsValid(value);
-  }
-  static const ResultType ResultType_MIN =
-    HashResponse_ResultType_ResultType_MIN;
-  static const ResultType ResultType_MAX =
-    HashResponse_ResultType_ResultType_MAX;
-  static const int ResultType_ARRAYSIZE =
-    HashResponse_ResultType_ResultType_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  ResultType_descriptor() {
-    return HashResponse_ResultType_descriptor();
-  }
-  static inline const ::std::string& ResultType_Name(ResultType value) {
-    return HashResponse_ResultType_Name(value);
-  }
-  static inline bool ResultType_Parse(const ::std::string& name,
-      ResultType* value) {
-    return HashResponse_ResultType_Parse(name, value);
-  }
-
   typedef HashResponse_ErrorCode ErrorCode;
+  static const ErrorCode OK = HashResponse_ErrorCode_OK;
   static const ErrorCode THREAD_ERROR = HashResponse_ErrorCode_THREAD_ERROR;
   static const ErrorCode BAD_ARGS = HashResponse_ErrorCode_BAD_ARGS;
   static const ErrorCode DB_ERROR = HashResponse_ErrorCode_DB_ERROR;
@@ -346,29 +301,22 @@ class HashResponse : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional .bolero.proto.HashResponse.ResultType operation = 1;
-  inline bool has_operation() const;
-  inline void clear_operation();
-  static const int kOperationFieldNumber = 1;
-  inline ::bolero::proto::HashResponse_ResultType operation() const;
-  inline void set_operation(::bolero::proto::HashResponse_ResultType value);
-
-  // optional string user_key = 2;
+  // optional bytes user_key = 1;
   inline bool has_user_key() const;
   inline void clear_user_key();
-  static const int kUserKeyFieldNumber = 2;
+  static const int kUserKeyFieldNumber = 1;
   inline const ::std::string& user_key() const;
   inline void set_user_key(const ::std::string& value);
   inline void set_user_key(const char* value);
-  inline void set_user_key(const char* value, size_t size);
+  inline void set_user_key(const void* value, size_t size);
   inline ::std::string* mutable_user_key();
   inline ::std::string* release_user_key();
   inline void set_allocated_user_key(::std::string* user_key);
 
-  // optional bytes res_batch = 3;
+  // optional bytes res_batch = 2;
   inline bool has_res_batch() const;
   inline void clear_res_batch();
-  static const int kResBatchFieldNumber = 3;
+  static const int kResBatchFieldNumber = 2;
   inline const ::std::string& res_batch() const;
   inline void set_res_batch(const ::std::string& value);
   inline void set_res_batch(const char* value);
@@ -377,17 +325,15 @@ class HashResponse : public ::google::protobuf::Message {
   inline ::std::string* release_res_batch();
   inline void set_allocated_res_batch(::std::string* res_batch);
 
-  // optional .bolero.proto.HashResponse.ErrorCode err = 4;
+  // optional .bolero.proto.HashResponse.ErrorCode err = 3;
   inline bool has_err() const;
   inline void clear_err();
-  static const int kErrFieldNumber = 4;
+  static const int kErrFieldNumber = 3;
   inline ::bolero::proto::HashResponse_ErrorCode err() const;
   inline void set_err(::bolero::proto::HashResponse_ErrorCode value);
 
   // @@protoc_insertion_point(class_scope:bolero.proto.HashResponse)
  private:
-  inline void set_has_operation();
-  inline void clear_has_operation();
   inline void set_has_user_key();
   inline void clear_has_user_key();
   inline void set_has_res_batch();
@@ -398,12 +344,11 @@ class HashResponse : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* user_key_;
-  int operation_;
-  int err_;
   ::std::string* res_batch_;
+  int err_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
 
   friend void  protobuf_AddDesc_region_5fserver_5fproto_2eproto();
   friend void protobuf_AssignDesc_region_5fserver_5fproto_2eproto();
@@ -501,7 +446,7 @@ inline void HashRequest::set_operation(::bolero::proto::HashRequest_OpType value
   operation_ = value;
 }
 
-// optional string user_key = 2;
+// optional bytes user_key = 2;
 inline bool HashRequest::has_user_key() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -534,7 +479,7 @@ inline void HashRequest::set_user_key(const char* value) {
   }
   user_key_->assign(value);
 }
-inline void HashRequest::set_user_key(const char* value, size_t size) {
+inline void HashRequest::set_user_key(const void* value, size_t size) {
   set_has_user_key();
   if (user_key_ == &::google::protobuf::internal::kEmptyString) {
     user_key_ = new ::std::string;
@@ -645,38 +590,15 @@ inline void HashRequest::set_allocated_req_batch(::std::string* req_batch) {
 
 // HashResponse
 
-// optional .bolero.proto.HashResponse.ResultType operation = 1;
-inline bool HashResponse::has_operation() const {
+// optional bytes user_key = 1;
+inline bool HashResponse::has_user_key() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void HashResponse::set_has_operation() {
+inline void HashResponse::set_has_user_key() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void HashResponse::clear_has_operation() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void HashResponse::clear_operation() {
-  operation_ = 0;
-  clear_has_operation();
-}
-inline ::bolero::proto::HashResponse_ResultType HashResponse::operation() const {
-  return static_cast< ::bolero::proto::HashResponse_ResultType >(operation_);
-}
-inline void HashResponse::set_operation(::bolero::proto::HashResponse_ResultType value) {
-  assert(::bolero::proto::HashResponse_ResultType_IsValid(value));
-  set_has_operation();
-  operation_ = value;
-}
-
-// optional string user_key = 2;
-inline bool HashResponse::has_user_key() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void HashResponse::set_has_user_key() {
-  _has_bits_[0] |= 0x00000002u;
-}
 inline void HashResponse::clear_has_user_key() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000001u;
 }
 inline void HashResponse::clear_user_key() {
   if (user_key_ != &::google::protobuf::internal::kEmptyString) {
@@ -701,7 +623,7 @@ inline void HashResponse::set_user_key(const char* value) {
   }
   user_key_->assign(value);
 }
-inline void HashResponse::set_user_key(const char* value, size_t size) {
+inline void HashResponse::set_user_key(const void* value, size_t size) {
   set_has_user_key();
   if (user_key_ == &::google::protobuf::internal::kEmptyString) {
     user_key_ = new ::std::string;
@@ -738,15 +660,15 @@ inline void HashResponse::set_allocated_user_key(::std::string* user_key) {
   }
 }
 
-// optional bytes res_batch = 3;
+// optional bytes res_batch = 2;
 inline bool HashResponse::has_res_batch() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
 inline void HashResponse::set_has_res_batch() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000002u;
 }
 inline void HashResponse::clear_has_res_batch() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void HashResponse::clear_res_batch() {
   if (res_batch_ != &::google::protobuf::internal::kEmptyString) {
@@ -808,15 +730,15 @@ inline void HashResponse::set_allocated_res_batch(::std::string* res_batch) {
   }
 }
 
-// optional .bolero.proto.HashResponse.ErrorCode err = 4;
+// optional .bolero.proto.HashResponse.ErrorCode err = 3;
 inline bool HashResponse::has_err() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void HashResponse::set_has_err() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void HashResponse::clear_has_err() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void HashResponse::clear_err() {
   err_ = 0;
@@ -844,10 +766,6 @@ namespace protobuf {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::bolero::proto::HashRequest_OpType>() {
   return ::bolero::proto::HashRequest_OpType_descriptor();
-}
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::bolero::proto::HashResponse_ResultType>() {
-  return ::bolero::proto::HashResponse_ResultType_descriptor();
 }
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::bolero::proto::HashResponse_ErrorCode>() {

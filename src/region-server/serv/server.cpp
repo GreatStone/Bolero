@@ -22,6 +22,7 @@ namespace bolero {
         db_opt.env = cur_env;
         leveldb::Status status = leveldb::DB::Open(db_opt, config_.db_location, &db);
         if (!status.ok()) {
+            perror(status.ToString().data());
             return false;
         }
         return true;

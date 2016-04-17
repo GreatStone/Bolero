@@ -71,6 +71,7 @@ namespace bolero {
         if (!GetMember(doc, "fs_addr", &fs_addr)) {return false;}
         if (!GetMember(doc, "remote_itercache_size", &remote_itercache_size)) {return false;}
         if (!GetMember(doc, "db_location", &db_location)) {return false;}
+        if (!GetMember(doc, "region_port", &region_port)) {return false;}
 
         auto iter = doc.FindMember("read_options");
         if (iter == doc.MemberEnd() || !iter->value.IsObject()) {return false;}

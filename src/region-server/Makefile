@@ -6,7 +6,10 @@ INCLUDE=-I../../include \
 	-I./ \
 	-I./proto/
 LIBS=-L/home/vagrant/hadoop/lib/native -lhdfs \
-	-lpthread
+	-lpthread \
+	-lprotobuf \
+	-lsnappy\
+	-lz
 STATIC_LIBS:=$(wildcard ../../libs/*.a)
 OBJ:=$(patsubst %.cc,%.o,$(patsubst %.cpp,%.o,$(SRC)))
 WORK_DIR=$(shell pwd)
@@ -14,29 +17,31 @@ TMP_DIR=${WORK_DIR}/temp
 
 LINKER=ar crs
 
-ALL:libstorage.a
+ALL:libstorage.a region_server
+
+region_server: region_main.cpp libstorage.a
+	@echo "[BUILD " $@ "]"
+	${GXX} ${CFLAGS} ${INCLUDE} ${LIBS} region_main.cpp libstorage.a -o region_server
 
 %.o:%.cpp
-	echo "build " $@
+	@echo "[BUILD " $@ "]"
 	${GXX} -c ${CFLAGS} ${INCLUDE} ${LIBS} $< -o $@
 
 %.o:%.cc
-	echo "build " $@
+	@echo "[BUILD " $@ "]"
 	${GXX} -c ${CFLAGS} ${INCLUDE} ${LIBS} $< -o $@
 
 libstorage.a: ${OBJ}
-	echo ${STATIC_LIBS}
+	@echo "[RELEASE " ${STATIC_LIBS} "]"
 	rm -rf ${TMP_DIR}
 	mkdir ${TMP_DIR}
 	cp ${STATIC_LIBS} ${TMP_DIR}
 	cd ${TMP_DIR} && find . | grep '\.a' | xargs -i ar x {}
+	@echo "[LINK " $@ "]"
 	${LINKER} libstorage.a ${TMP_DIR}/* ${OBJ}
 	rm ${TMP_DIR} -rf
 
 clean:
 	rm ${OBJ} -f
 	rm libstorage.a -f
-	rm test -f
-
-test: test.cpp libstorage.a
-	${GXX} ${INCLUDE} test.cpp libstorage.a -o test ${LIBS}
+	rm region_server -f

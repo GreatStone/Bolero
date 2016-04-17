@@ -17,6 +17,7 @@ namespace bolero {
         std::string fs_addr;
         uint32_t remote_itercache_size;
         std::string db_location;
+        uint32_t region_port;
         bool read_from_file(const std::string& file_path);
         leveldb::ReadOptions default_ropt() const {
             return db_ropt;

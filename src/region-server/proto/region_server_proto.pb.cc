@@ -28,7 +28,6 @@ const ::google::protobuf::EnumDescriptor* HashRequest_OpType_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* HashResponse_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   HashResponse_reflection_ = NULL;
-const ::google::protobuf::EnumDescriptor* HashResponse_ResultType_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* HashResponse_ErrorCode_descriptor_ = NULL;
 const ::google::protobuf::ServiceDescriptor* RegionServerProto_descriptor_ = NULL;
 
@@ -60,8 +59,7 @@ void protobuf_AssignDesc_region_5fserver_5fproto_2eproto() {
       sizeof(HashRequest));
   HashRequest_OpType_descriptor_ = HashRequest_descriptor_->enum_type(0);
   HashResponse_descriptor_ = file->message_type(1);
-  static const int HashResponse_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HashResponse, operation_),
+  static const int HashResponse_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HashResponse, user_key_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HashResponse, res_batch_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HashResponse, err_),
@@ -77,8 +75,7 @@ void protobuf_AssignDesc_region_5fserver_5fproto_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(HashResponse));
-  HashResponse_ResultType_descriptor_ = HashResponse_descriptor_->enum_type(0);
-  HashResponse_ErrorCode_descriptor_ = HashResponse_descriptor_->enum_type(1);
+  HashResponse_ErrorCode_descriptor_ = HashResponse_descriptor_->enum_type(0);
   RegionServerProto_descriptor_ = file->service(0);
 }
 
@@ -117,18 +114,15 @@ void protobuf_AddDesc_region_5fserver_5fproto_2eproto() {
     "\n\031region_server_proto.proto\022\014bolero.prot"
     "o\"\233\001\n\013HashRequest\0223\n\toperation\030\001 \001(\0162 .b"
     "olero.proto.HashRequest.OpType\022\020\n\010user_k"
-    "ey\030\002 \001(\t\022\021\n\treq_batch\030\003 \001(\014\"2\n\006OpType\022\010\n"
+    "ey\030\002 \001(\014\022\021\n\treq_batch\030\003 \001(\014\"2\n\006OpType\022\010\n"
     "\004HGET\020\000\022\t\n\005HMGET\020\001\022\010\n\004HSET\020\002\022\t\n\005HMSET\020\003\""
-    "\223\002\n\014HashResponse\0228\n\toperation\030\001 \001(\0162%.bo"
-    "lero.proto.HashResponse.ResultType\022\020\n\010us"
-    "er_key\030\002 \001(\t\022\021\n\tres_batch\030\003 \001(\014\0221\n\003err\030\004"
-    " \001(\0162$.bolero.proto.HashResponse.ErrorCo"
-    "de\"6\n\nResultType\022\010\n\004HGET\020\000\022\t\n\005HMGET\020\001\022\010\n"
-    "\004HSET\020\002\022\t\n\005HMSET\020\003\"9\n\tErrorCode\022\020\n\014THREA"
-    "D_ERROR\020\000\022\014\n\010BAD_ARGS\020\001\022\014\n\010DB_ERROR\020\0022U\n"
-    "\021RegionServerProto\022@\n\007hash_op\022\031.bolero.p"
-    "roto.HashRequest\032\032.bolero.proto.HashResp"
-    "onseB\003\200\001\001", 569);
+    "\251\001\n\014HashResponse\022\020\n\010user_key\030\001 \001(\014\022\021\n\tre"
+    "s_batch\030\002 \001(\014\0221\n\003err\030\003 \001(\0162$.bolero.prot"
+    "o.HashResponse.ErrorCode\"A\n\tErrorCode\022\006\n"
+    "\002OK\020\000\022\020\n\014THREAD_ERROR\020\001\022\014\n\010BAD_ARGS\020\002\022\014\n"
+    "\010DB_ERROR\020\0032U\n\021RegionServerProto\022@\n\007hash"
+    "_op\022\031.bolero.proto.HashRequest\032\032.bolero."
+    "proto.HashResponseB\003\200\001\001", 463);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "region_server_proto.proto", &protobuf_RegisterTypes);
   HashRequest::default_instance_ = new HashRequest();
@@ -280,16 +274,13 @@ bool HashRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // optional string user_key = 2;
+      // optional bytes user_key = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_user_key:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_user_key()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->user_key().data(), this->user_key().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
@@ -335,12 +326,9 @@ void HashRequest::SerializeWithCachedSizes(
       1, this->operation(), output);
   }
 
-  // optional string user_key = 2;
+  // optional bytes user_key = 2;
   if (has_user_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->user_key().data(), this->user_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
       2, this->user_key(), output);
   }
 
@@ -364,13 +352,10 @@ void HashRequest::SerializeWithCachedSizes(
       1, this->operation(), target);
   }
 
-  // optional string user_key = 2;
+  // optional bytes user_key = 2;
   if (has_user_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->user_key().data(), this->user_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         2, this->user_key(), target);
   }
 
@@ -398,10 +383,10 @@ int HashRequest::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->operation());
     }
 
-    // optional string user_key = 2;
+    // optional bytes user_key = 2;
     if (has_user_key()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->user_key());
     }
 
@@ -491,11 +476,11 @@ void HashRequest::Swap(HashRequest* other) {
 
 // ===================================================================
 
-const ::google::protobuf::EnumDescriptor* HashResponse_ResultType_descriptor() {
+const ::google::protobuf::EnumDescriptor* HashResponse_ErrorCode_descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return HashResponse_ResultType_descriptor_;
+  return HashResponse_ErrorCode_descriptor_;
 }
-bool HashResponse_ResultType_IsValid(int value) {
+bool HashResponse_ErrorCode_IsValid(int value) {
   switch(value) {
     case 0:
     case 1:
@@ -508,30 +493,7 @@ bool HashResponse_ResultType_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
-const HashResponse_ResultType HashResponse::HGET;
-const HashResponse_ResultType HashResponse::HMGET;
-const HashResponse_ResultType HashResponse::HSET;
-const HashResponse_ResultType HashResponse::HMSET;
-const HashResponse_ResultType HashResponse::ResultType_MIN;
-const HashResponse_ResultType HashResponse::ResultType_MAX;
-const int HashResponse::ResultType_ARRAYSIZE;
-#endif  // _MSC_VER
-const ::google::protobuf::EnumDescriptor* HashResponse_ErrorCode_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return HashResponse_ErrorCode_descriptor_;
-}
-bool HashResponse_ErrorCode_IsValid(int value) {
-  switch(value) {
-    case 0:
-    case 1:
-    case 2:
-      return true;
-    default:
-      return false;
-  }
-}
-
-#ifndef _MSC_VER
+const HashResponse_ErrorCode HashResponse::OK;
 const HashResponse_ErrorCode HashResponse::THREAD_ERROR;
 const HashResponse_ErrorCode HashResponse::BAD_ARGS;
 const HashResponse_ErrorCode HashResponse::DB_ERROR;
@@ -540,7 +502,6 @@ const HashResponse_ErrorCode HashResponse::ErrorCode_MAX;
 const int HashResponse::ErrorCode_ARRAYSIZE;
 #endif  // _MSC_VER
 #ifndef _MSC_VER
-const int HashResponse::kOperationFieldNumber;
 const int HashResponse::kUserKeyFieldNumber;
 const int HashResponse::kResBatchFieldNumber;
 const int HashResponse::kErrFieldNumber;
@@ -562,7 +523,6 @@ HashResponse::HashResponse(const HashResponse& from)
 
 void HashResponse::SharedCtor() {
   _cached_size_ = 0;
-  operation_ = 0;
   user_key_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   res_batch_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   err_ = 0;
@@ -607,7 +567,6 @@ HashResponse* HashResponse::New() const {
 
 void HashResponse::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    operation_ = 0;
     if (has_user_key()) {
       if (user_key_ != &::google::protobuf::internal::kEmptyString) {
         user_key_->clear();
@@ -630,45 +589,21 @@ bool HashResponse::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .bolero.proto.HashResponse.ResultType operation = 1;
+      // optional bytes user_key = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::bolero::proto::HashResponse_ResultType_IsValid(value)) {
-            set_operation(static_cast< ::bolero::proto::HashResponse_ResultType >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(1, value);
-          }
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_user_key;
-        break;
-      }
-
-      // optional string user_key = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_user_key:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_user_key()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->user_key().data(), this->user_key().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_res_batch;
+        if (input->ExpectTag(18)) goto parse_res_batch;
         break;
       }
 
-      // optional bytes res_batch = 3;
-      case 3: {
+      // optional bytes res_batch = 2;
+      case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_res_batch:
@@ -677,12 +612,12 @@ bool HashResponse::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(32)) goto parse_err;
+        if (input->ExpectTag(24)) goto parse_err;
         break;
       }
 
-      // optional .bolero.proto.HashResponse.ErrorCode err = 4;
-      case 4: {
+      // optional .bolero.proto.HashResponse.ErrorCode err = 3;
+      case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_err:
@@ -693,7 +628,7 @@ bool HashResponse::MergePartialFromCodedStream(
           if (::bolero::proto::HashResponse_ErrorCode_IsValid(value)) {
             set_err(static_cast< ::bolero::proto::HashResponse_ErrorCode >(value));
           } else {
-            mutable_unknown_fields()->AddVarint(4, value);
+            mutable_unknown_fields()->AddVarint(3, value);
           }
         } else {
           goto handle_uninterpreted;
@@ -720,31 +655,22 @@ bool HashResponse::MergePartialFromCodedStream(
 
 void HashResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional .bolero.proto.HashResponse.ResultType operation = 1;
-  if (has_operation()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->operation(), output);
-  }
-
-  // optional string user_key = 2;
+  // optional bytes user_key = 1;
   if (has_user_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->user_key().data(), this->user_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      2, this->user_key(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
+      1, this->user_key(), output);
   }
 
-  // optional bytes res_batch = 3;
+  // optional bytes res_batch = 2;
   if (has_res_batch()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
-      3, this->res_batch(), output);
+      2, this->res_batch(), output);
   }
 
-  // optional .bolero.proto.HashResponse.ErrorCode err = 4;
+  // optional .bolero.proto.HashResponse.ErrorCode err = 3;
   if (has_err()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      4, this->err(), output);
+      3, this->err(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -755,33 +681,24 @@ void HashResponse::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* HashResponse::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // optional .bolero.proto.HashResponse.ResultType operation = 1;
-  if (has_operation()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->operation(), target);
-  }
-
-  // optional string user_key = 2;
+  // optional bytes user_key = 1;
   if (has_user_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->user_key().data(), this->user_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->user_key(), target);
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        1, this->user_key(), target);
   }
 
-  // optional bytes res_batch = 3;
+  // optional bytes res_batch = 2;
   if (has_res_batch()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        3, this->res_batch(), target);
+        2, this->res_batch(), target);
   }
 
-  // optional .bolero.proto.HashResponse.ErrorCode err = 4;
+  // optional .bolero.proto.HashResponse.ErrorCode err = 3;
   if (has_err()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      4, this->err(), target);
+      3, this->err(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -795,27 +712,21 @@ int HashResponse::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional .bolero.proto.HashResponse.ResultType operation = 1;
-    if (has_operation()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->operation());
-    }
-
-    // optional string user_key = 2;
+    // optional bytes user_key = 1;
     if (has_user_key()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->user_key());
     }
 
-    // optional bytes res_batch = 3;
+    // optional bytes res_batch = 2;
     if (has_res_batch()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->res_batch());
     }
 
-    // optional .bolero.proto.HashResponse.ErrorCode err = 4;
+    // optional .bolero.proto.HashResponse.ErrorCode err = 3;
     if (has_err()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->err());
@@ -848,9 +759,6 @@ void HashResponse::MergeFrom(const ::google::protobuf::Message& from) {
 void HashResponse::MergeFrom(const HashResponse& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_operation()) {
-      set_operation(from.operation());
-    }
     if (from.has_user_key()) {
       set_user_key(from.user_key());
     }
@@ -883,7 +791,6 @@ bool HashResponse::IsInitialized() const {
 
 void HashResponse::Swap(HashResponse* other) {
   if (other != this) {
-    std::swap(operation_, other->operation_);
     std::swap(user_key_, other->user_key_);
     std::swap(res_batch_, other->res_batch_);
     std::swap(err_, other->err_);

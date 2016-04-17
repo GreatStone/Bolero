@@ -114,9 +114,9 @@ void protobuf_AddDesc_region_5fserver_5fproto_2eproto() {
     "\n\031region_server_proto.proto\022\014bolero.prot"
     "o\"\233\001\n\013HashRequest\0223\n\toperation\030\001 \001(\0162 .b"
     "olero.proto.HashRequest.OpType\022\020\n\010user_k"
-    "ey\030\002 \001(\t\022\021\n\treq_batch\030\003 \001(\014\"2\n\006OpType\022\010\n"
+    "ey\030\002 \001(\014\022\021\n\treq_batch\030\003 \001(\014\"2\n\006OpType\022\010\n"
     "\004HGET\020\000\022\t\n\005HMGET\020\001\022\010\n\004HSET\020\002\022\t\n\005HMSET\020\003\""
-    "\251\001\n\014HashResponse\022\020\n\010user_key\030\001 \001(\t\022\021\n\tre"
+    "\251\001\n\014HashResponse\022\020\n\010user_key\030\001 \001(\014\022\021\n\tre"
     "s_batch\030\002 \001(\014\0221\n\003err\030\003 \001(\0162$.bolero.prot"
     "o.HashResponse.ErrorCode\"A\n\tErrorCode\022\006\n"
     "\002OK\020\000\022\020\n\014THREAD_ERROR\020\001\022\014\n\010BAD_ARGS\020\002\022\014\n"
@@ -274,16 +274,13 @@ bool HashRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // optional string user_key = 2;
+      // optional bytes user_key = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_user_key:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_user_key()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->user_key().data(), this->user_key().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
@@ -329,12 +326,9 @@ void HashRequest::SerializeWithCachedSizes(
       1, this->operation(), output);
   }
 
-  // optional string user_key = 2;
+  // optional bytes user_key = 2;
   if (has_user_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->user_key().data(), this->user_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
       2, this->user_key(), output);
   }
 
@@ -358,13 +352,10 @@ void HashRequest::SerializeWithCachedSizes(
       1, this->operation(), target);
   }
 
-  // optional string user_key = 2;
+  // optional bytes user_key = 2;
   if (has_user_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->user_key().data(), this->user_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         2, this->user_key(), target);
   }
 
@@ -392,10 +383,10 @@ int HashRequest::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->operation());
     }
 
-    // optional string user_key = 2;
+    // optional bytes user_key = 2;
     if (has_user_key()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->user_key());
     }
 
@@ -598,15 +589,12 @@ bool HashResponse::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional string user_key = 1;
+      // optional bytes user_key = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_user_key()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->user_key().data(), this->user_key().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
@@ -667,12 +655,9 @@ bool HashResponse::MergePartialFromCodedStream(
 
 void HashResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional string user_key = 1;
+  // optional bytes user_key = 1;
   if (has_user_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->user_key().data(), this->user_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
       1, this->user_key(), output);
   }
 
@@ -696,13 +681,10 @@ void HashResponse::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* HashResponse::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // optional string user_key = 1;
+  // optional bytes user_key = 1;
   if (has_user_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->user_key().data(), this->user_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         1, this->user_key(), target);
   }
 
@@ -730,10 +712,10 @@ int HashResponse::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional string user_key = 1;
+    // optional bytes user_key = 1;
     if (has_user_key()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->user_key());
     }
 
