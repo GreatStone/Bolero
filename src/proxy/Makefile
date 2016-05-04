@@ -1,14 +1,15 @@
 GXX=g++ -std=c++11
 CFLAGS=-O0 -g -Wall -Werror
 
-SRC:=$(wildcard rpc/*.cpp proto/*.cc)
+SRC:=$(wildcard rpc/*.cpp proto/*.cc forward/*.cpp)
 INCLUDE=-I../../include \
 	-I./ \
 	-I./proto/
 LIBS=	-lpthread \
 	-lprotobuf \
 	-lsnappy \
-	-lz
+	-lz \
+	-levent
 
 STATIC_LIBS:=$(wildcard ../../libs/*.a)
 OBJ:=$(patsubst %.cc,%.o,$(patsubst %.cpp,%.o,$(SRC)))

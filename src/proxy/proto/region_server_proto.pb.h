@@ -43,11 +43,13 @@ enum HashRequest_OpType {
   HashRequest_OpType_HGET = 0,
   HashRequest_OpType_HMGET = 1,
   HashRequest_OpType_HSET = 2,
-  HashRequest_OpType_HMSET = 3
+  HashRequest_OpType_HMSET = 3,
+  HashRequest_OpType_HDEL = 4,
+  HashRequest_OpType_HMDEL = 5
 };
 bool HashRequest_OpType_IsValid(int value);
 const HashRequest_OpType HashRequest_OpType_OpType_MIN = HashRequest_OpType_HGET;
-const HashRequest_OpType HashRequest_OpType_OpType_MAX = HashRequest_OpType_HMSET;
+const HashRequest_OpType HashRequest_OpType_OpType_MAX = HashRequest_OpType_HMDEL;
 const int HashRequest_OpType_OpType_ARRAYSIZE = HashRequest_OpType_OpType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* HashRequest_OpType_descriptor();
@@ -140,6 +142,8 @@ class HashRequest : public ::google::protobuf::Message {
   static const OpType HMGET = HashRequest_OpType_HMGET;
   static const OpType HSET = HashRequest_OpType_HSET;
   static const OpType HMSET = HashRequest_OpType_HMSET;
+  static const OpType HDEL = HashRequest_OpType_HDEL;
+  static const OpType HMDEL = HashRequest_OpType_HMDEL;
   static inline bool OpType_IsValid(int value) {
     return HashRequest_OpType_IsValid(value);
   }

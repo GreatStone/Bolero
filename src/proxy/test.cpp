@@ -1,5 +1,7 @@
 #include "rpc/proxy_config.h"
 #include "rpc/rpc_center.h"
+#include "forward/forward_center.h"
+
 #include "sofa/pbrpc/pbrpc.h"
 #include "leveldb/db.h"
 
@@ -15,26 +17,10 @@ int main(int argc, char** argv) {
         printf("Fail to load config %s\n", argv[1]);
         return -1;
     }
-    bolero::RpcCenter center("gscluster.node1:12321");
-    center.set_config(&config);
-    if (!center.init()) {
-        printf("Fail to init center of RPC.\n");
-        return -1;
-    }
-    for (std::string key : {"testa", "testb", "testc"}) {
-        for (int i = 0; i < 1000; ++i) {
-            std::string cur = key;
-            cur.append(reinterpret_cast<char*>(&i), sizeof(int));
-            int e = i * 3;
-            center.hset(cur, "a", leveldb::Slice(reinterpret_cast<char*>(&e), sizeof(int)));
-        }
-    }
-    for (int i = 0; i < 1000; ++i) {
-        std::string key = "testa";
-        key.append(reinterpret_cast<char*>(&i), sizeof(int));
-        std::string e;
-        center.hget(key, "a", &e);
-        printf("get %d\n", *reinterpret_cast<const int*>(e.data()));
-    }
+    SOFA_PBRPC_SET_LOG_LEVEL(NOTICE);
+    bolero::ForwardCenter forward(&config);
+    forward.start_listen();
+    SLOG(INFO, "started.\n");
+    for(;;);
     return 0;
 }

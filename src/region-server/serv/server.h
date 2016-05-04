@@ -17,8 +17,8 @@ namespace bolero {
             delete cur_env;
         }
         bool init(const std::string& config_file);
-        leveldb::ReadOptions default_read_options();
-        leveldb::WriteOptions default_write_options();
+        leveldb::ReadOptions default_read_options() const {return config_.default_ropt();}
+        leveldb::WriteOptions default_write_options() const {return config_.default_wopt();}
 
         leveldb::Status hget(leveldb::Slice user_key, leveldb::Slice field, std::string* value);
         leveldb::Status hmget(leveldb::Slice user_key, const std::vector<leveldb::Slice>& fields,

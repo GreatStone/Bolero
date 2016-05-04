@@ -7,6 +7,8 @@ message HashRequest {
         HMGET = 1;
         HSET = 2;
         HMSET = 3;
+        HDEL = 4;
+        HMDEL = 5;
     }
     optional OpType operation = 1;
     optional bytes user_key = 2;

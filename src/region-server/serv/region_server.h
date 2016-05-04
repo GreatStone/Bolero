@@ -25,6 +25,14 @@ namespace bolero {
                          ::bolero::proto::HashResponse* response);
         void handle_hset(const ::bolero::proto::HashRequest* request,
                          ::bolero::proto::HashResponse* response);
+        void handle_hdel(const ::bolero::proto::HashRequest* request,
+                         ::bolero::proto::HashResponse* response);
+        void handle_hmget(const ::bolero::proto::HashRequest* request,
+                          ::bolero::proto::HashResponse* response);
+        void handle_hmset(const ::bolero::proto::HashRequest* request,
+                          ::bolero::proto::HashResponse* response);
+        void handle_hmdel(const ::bolero::proto::HashRequest* request,
+                          ::bolero::proto::HashResponse* response);
     private:
         Server* local_server_;
         sofa::pbrpc::RpcServer* rpc_server_;

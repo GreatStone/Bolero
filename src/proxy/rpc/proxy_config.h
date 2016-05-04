@@ -9,10 +9,13 @@
 namespace bolero {
     class ProxyConfig {
     public:
-        ProxyConfig(): zk_host(), zk_region_ppath(), client_opts_() { }
+        ProxyConfig(): zk_host(), zk_region_ppath(), proxy_port(-1),
+                       max_client_conn(100), client_opts_() { }
         bool init(const std::string& file_name);
         std::string zk_host;
         std::string zk_region_ppath;
+        int proxy_port;
+        int max_client_conn;
         struct ::sofa::pbrpc::RpcClientOptions default_client_opt() {
             return client_opts_;
         }

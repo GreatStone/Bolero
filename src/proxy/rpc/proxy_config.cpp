@@ -67,6 +67,8 @@ namespace bolero {
 
         if (!GetMember(doc, "zk_host", &zk_host)) {return false;}
         if (!GetMember(doc, "zk_region_ppath", &zk_region_ppath)) {return false;}
+        if (!GetMember(doc, "proxy_port", &proxy_port)) {return false;}
+        if (!GetMember(doc, "max_client_conn", &max_client_conn)) {return false;}
 
         auto iter = doc.FindMember("rpc_option");
         if (iter == doc.MemberEnd() || !iter->value.IsObject()) {return false;}

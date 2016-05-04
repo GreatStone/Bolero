@@ -43,9 +43,16 @@ namespace bolero {
         std::string value;
         leveldb::Status s = local_server_->hget(user_key, field, &value);
         if (s.ok()) {
-            response->set_res_batch(value);
+            int length = value.size();
+            value = std::string(reinterpret_cast<char*>(&length), sizeof(int32_t)) + value;
+            response->set_res_batch(std::move(value));
+            response->set_err(::bolero::proto::HashResponse::OK);
             return;
         } else if (s.IsNotFound()) {
+            int length = -1;
+            value = std::string(reinterpret_cast<char*>(&length), sizeof(int32_t));
+            response->set_res_batch(std::move(value));
+            response->set_err(::bolero::proto::HashResponse::OK);
             return;
         }
         response->set_err(::bolero::proto::HashResponse::DB_ERROR);
@@ -92,6 +99,158 @@ namespace bolero {
         }
         response->set_err(::bolero::proto::HashResponse::DB_ERROR);
     }
+    void RegionServer::handle_hdel(const ::bolero::proto::HashRequest* request,
+                                   ::bolero::proto::HashResponse* response) {
+        if (!request->has_user_key() || request->user_key().empty()) {
+            response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+            return;
+        } else if (!request->has_req_batch() || request->req_batch().empty()) {
+            response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+            return;
+        }
+        response->set_user_key(request->user_key());
+        leveldb::Slice user_key(request->user_key());
+        leveldb::Slice field(request->req_batch());
+        std::string value;
+        leveldb::Status s = local_server_->hdel(user_key, field);
+        if (s.ok() || s.IsNotFound()) {
+            response->set_err(::bolero::proto::HashResponse::OK);
+            return;
+        }
+        response->set_err(::bolero::proto::HashResponse::DB_ERROR);
+    }
+    void RegionServer::handle_hmget(const ::bolero::proto::HashRequest* request,
+                                    ::bolero::proto::HashResponse* response) {
+        if (!request->has_user_key() || request->user_key().empty()) {
+            response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+            return;
+        } else if (!request->has_req_batch() || request->req_batch().empty()) {
+            response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+            return;
+        }
+        response->set_user_key(request->user_key());
+        leveldb::Slice user_key(request->user_key());
+        int32_t field_length = -1;
+        const char* req_buf = request->req_batch().data();
+        const char* const req_buf_end = req_buf + request->req_batch().length();
+        std::vector<leveldb::Slice> fields;
+        std::vector<std::string> values;
+        while (req_buf < req_buf_end) {
+            if (req_buf + sizeof(int32_t) > req_buf_end) {
+                response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+                return;
+            }
+            field_length = *reinterpret_cast<const int32_t*>(req_buf);
+            req_buf += sizeof(int32_t);
+            if (req_buf + field_length > req_buf) {
+                response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+                return;
+            }
+            fields.emplace_back(::leveldb::Slice(req_buf, field_length));
+            req_buf += field_length;
+        }
+        leveldb::Status s = local_server_->hmget(user_key, fields, &values);
+        if (!s.ok()) {
+            response->set_err(::bolero::proto::HashResponse::DB_ERROR);
+            return;
+        }
+        std::string rsp_batch;
+        int32_t length;
+        for (std::string e : values) {
+            length = e.size();
+            rsp_batch.append(reinterpret_cast<char*>(&length), sizeof(int32_t));
+            rsp_batch += e;
+        }
+        response->set_res_batch(std::move(rsp_batch));
+        response->set_err(::bolero::proto::HashResponse::OK);
+    }
+    void RegionServer::handle_hmset(const ::bolero::proto::HashRequest* request,
+                                    ::bolero::proto::HashResponse* response) {
+        if (!request->has_user_key() || request->user_key().empty()) {
+            response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+            return;
+        } else if (!request->has_req_batch() || request->req_batch().empty()) {
+            response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+            return;
+        }
+        response->set_user_key(request->user_key());
+        leveldb::Slice user_key(request->user_key());
+        int32_t field_length = -1;
+        int32_t value_length = -1;
+        const char* req_buf = request->req_batch().data();
+        const char* const req_buf_end = req_buf + request->req_batch().length();
+        std::vector<std::pair<leveldb::Slice, leveldb::Slice>> kvs;
+        const char* field_pos;
+        while (req_buf < req_buf_end) {
+            if (req_buf + sizeof(int32_t) > req_buf_end) {
+                response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+                return;
+            }
+            field_length = *reinterpret_cast<const int32_t*>(req_buf);
+            req_buf += sizeof(int32_t);
+            if (req_buf + field_length > req_buf) {
+                response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+                return;
+            }
+            req_buf += field_length;
+            field_pos = req_buf;
+            if (req_buf + sizeof(int32_t) > req_buf_end) {
+                response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+                return;
+            }
+            value_length = *reinterpret_cast<const int32_t*>(req_buf);
+            req_buf += sizeof(int32_t);
+            if (req_buf + value_length > req_buf) {
+                response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+                return;
+            }
+            kvs.emplace_back(std::make_pair(::leveldb::Slice(field_pos, field_length), ::leveldb::Slice(req_buf, value_length)));
+            req_buf += value_length;
+        }
+        leveldb::Status s = local_server_->hmset(user_key, kvs);
+        if (!s.ok()) {
+            response->set_err(::bolero::proto::HashResponse::DB_ERROR);
+            return;
+        }
+        response->set_err(::bolero::proto::HashResponse::OK);
+    }
+    void RegionServer::handle_hmdel(const ::bolero::proto::HashRequest* request,
+                                    ::bolero::proto::HashResponse* response) {
+        if (!request->has_user_key() || request->user_key().empty()) {
+            response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+            return;
+        } else if (!request->has_req_batch() || request->req_batch().empty()) {
+            response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+            return;
+        }
+        response->set_user_key(request->user_key());
+        leveldb::Slice user_key(request->user_key());
+        int32_t field_length = -1;
+        const char* req_buf = request->req_batch().data();
+        const char* const req_buf_end = req_buf + request->req_batch().length();
+        std::vector<leveldb::Slice> fields;
+        while (req_buf < req_buf_end) {
+            if (req_buf + sizeof(int32_t) > req_buf_end) {
+                response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+                return;
+            }
+            field_length = *reinterpret_cast<const int32_t*>(req_buf);
+            req_buf += sizeof(int32_t);
+            if (req_buf + field_length > req_buf) {
+                response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
+                return;
+            }
+            fields.emplace_back(::leveldb::Slice(req_buf, field_length));
+            req_buf += field_length;
+        }
+        leveldb::Status s = local_server_->hmdel(user_key, fields);
+        if (!s.ok()) {
+            response->set_err(::bolero::proto::HashResponse::DB_ERROR);
+            return;
+        }
+        response->set_err(::bolero::proto::HashResponse::OK);
+    }
+
     typedef std::pair<RegionServer*, std::pair<const ::bolero::proto::HashRequest*, std::pair<::bolero::proto::HashResponse*, ::google::protobuf::Closure*> > > PackedArgs;
     static void* hash_handle(void* args) {
         PackedArgs* rargs = reinterpret_cast<PackedArgs*>(args);
@@ -110,11 +269,23 @@ namespace bolero {
             SLOG(INFO, "HSET");
             break;
         case ::bolero::proto::HashRequest::HMSET:
+            region->handle_hmset(request, response);
             SLOG(INFO, "HMSET");
             break;
         case ::bolero::proto::HashRequest::HMGET:
+            region->handle_hmget(request, response);
             SLOG(INFO, "HMGET");
             break;
+        case ::bolero::proto::HashRequest::HDEL:
+            region->handle_hdel(request, response);
+            SLOG(INFO, "HDEL");
+            break;
+        case ::bolero::proto::HashRequest::HMDEL:
+            region->handle_hmdel(request, response);
+            SLOG(INFO, "HMDEL");
+            break;
+        default:
+            assert(false);
         }
         done->Run();
         delete rargs;

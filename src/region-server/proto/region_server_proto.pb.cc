@@ -112,17 +112,18 @@ void protobuf_AddDesc_region_5fserver_5fproto_2eproto() {
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\031region_server_proto.proto\022\014bolero.prot"
-    "o\"\233\001\n\013HashRequest\0223\n\toperation\030\001 \001(\0162 .b"
+    "o\"\260\001\n\013HashRequest\0223\n\toperation\030\001 \001(\0162 .b"
     "olero.proto.HashRequest.OpType\022\020\n\010user_k"
-    "ey\030\002 \001(\014\022\021\n\treq_batch\030\003 \001(\014\"2\n\006OpType\022\010\n"
-    "\004HGET\020\000\022\t\n\005HMGET\020\001\022\010\n\004HSET\020\002\022\t\n\005HMSET\020\003\""
-    "\251\001\n\014HashResponse\022\020\n\010user_key\030\001 \001(\014\022\021\n\tre"
-    "s_batch\030\002 \001(\014\0221\n\003err\030\003 \001(\0162$.bolero.prot"
-    "o.HashResponse.ErrorCode\"A\n\tErrorCode\022\006\n"
-    "\002OK\020\000\022\020\n\014THREAD_ERROR\020\001\022\014\n\010BAD_ARGS\020\002\022\014\n"
-    "\010DB_ERROR\020\0032U\n\021RegionServerProto\022@\n\007hash"
-    "_op\022\031.bolero.proto.HashRequest\032\032.bolero."
-    "proto.HashResponseB\003\200\001\001", 463);
+    "ey\030\002 \001(\014\022\021\n\treq_batch\030\003 \001(\014\"G\n\006OpType\022\010\n"
+    "\004HGET\020\000\022\t\n\005HMGET\020\001\022\010\n\004HSET\020\002\022\t\n\005HMSET\020\003\022"
+    "\010\n\004HDEL\020\004\022\t\n\005HMDEL\020\005\"\251\001\n\014HashResponse\022\020\n"
+    "\010user_key\030\001 \001(\014\022\021\n\tres_batch\030\002 \001(\014\0221\n\003er"
+    "r\030\003 \001(\0162$.bolero.proto.HashResponse.Erro"
+    "rCode\"A\n\tErrorCode\022\006\n\002OK\020\000\022\020\n\014THREAD_ERR"
+    "OR\020\001\022\014\n\010BAD_ARGS\020\002\022\014\n\010DB_ERROR\020\0032U\n\021Regi"
+    "onServerProto\022@\n\007hash_op\022\031.bolero.proto."
+    "HashRequest\032\032.bolero.proto.HashResponseB"
+    "\003\200\001\001", 484);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "region_server_proto.proto", &protobuf_RegisterTypes);
   HashRequest::default_instance_ = new HashRequest();
@@ -151,6 +152,8 @@ bool HashRequest_OpType_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -162,6 +165,8 @@ const HashRequest_OpType HashRequest::HGET;
 const HashRequest_OpType HashRequest::HMGET;
 const HashRequest_OpType HashRequest::HSET;
 const HashRequest_OpType HashRequest::HMSET;
+const HashRequest_OpType HashRequest::HDEL;
+const HashRequest_OpType HashRequest::HMDEL;
 const HashRequest_OpType HashRequest::OpType_MIN;
 const HashRequest_OpType HashRequest::OpType_MAX;
 const int HashRequest::OpType_ARRAYSIZE;
