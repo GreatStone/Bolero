@@ -36,25 +36,43 @@ namespace bolero {
         void set_forward_center(shared_ptr<ForwardCenter> forward_center) {
             forward_center_ = forward_center;
         }
+        static ::bolero::proto::HashRequest* new_hash_request() {
+            return new ::bolero::proto::HashRequest;
+        }
+        static ::bolero::proto::HashResponse* new_hash_response() {
+            return new ::bolero::proto::HashResponse;
+        }
         bool hget(leveldb::Slice user_key, leveldb::Slice field,
+                  ::bolero::proto::HashRequest* request,
+                  ::bolero::proto::HashResponse* response,
                   ::google::protobuf::Closure* done = nullptr,
                   int64_t time_out = 10000);
-        bool hset(leveldb::Slice user_key, leveldb::Slice field,
-                  leveldb::Slice value, ::google::protobuf::Closure* done = nullptr,
+        bool hset(leveldb::Slice user_key, leveldb::Slice field, leveldb::Slice value,
+                  ::bolero::proto::HashRequest* request,
+                  ::bolero::proto::HashResponse* response,
+                  ::google::protobuf::Closure* done = nullptr,
                   int64_t time_out = 10000);
         bool hdel(leveldb::Slice user_key, leveldb::Slice field,
+                  ::bolero::proto::HashRequest* request,
+                  ::bolero::proto::HashResponse* response,
                   ::google::protobuf::Closure* done = nullptr,
                   int64_t time_out = 10000);
         bool hmget(leveldb::Slice user_key, const std::vector<leveldb::Slice>& fields,
+                   ::bolero::proto::HashRequest* request,
+                   ::bolero::proto::HashResponse* response,
                    ::google::protobuf::Closure* done = nullptr,
                    int64_t time_out = 10000);
         bool hmset(leveldb::Slice user_key,
                    const std::vector<std::pair<leveldb::Slice, leveldb::Slice>>& kvs,
+                   ::bolero::proto::HashRequest* request,
+                   ::bolero::proto::HashResponse* response,
                    ::google::protobuf::Closure* done = nullptr,
                    int64_t time_out = 10000);
         bool hmdel(leveldb::Slice user_key, const std::vector<leveldb::Slice>& field,
-                  ::google::protobuf::Closure* done = nullptr,
-                  int64_t time_out = 10000);
+                   ::bolero::proto::HashRequest* request,
+                   ::bolero::proto::HashResponse* response,
+                   ::google::protobuf::Closure* done = nullptr,
+                   int64_t time_out = 10000);
     private:
         shared_ptr<::bolero::proto::RegionServerProto_Stub> get_stub(const std::string& addr);
         static ProxyConfig* config_;

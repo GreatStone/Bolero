@@ -2,7 +2,7 @@
 
 namespace bolero {
     shared_ptr<struct Region> new_region(const std::string& rname, const std::string& raddr,
-                              unsigned rreadable, unsigned rwritable) {
+                                         unsigned rreadable, unsigned rwritable) {
         shared_ptr<struct Region> ret(new struct Region);
         if (ret == nullptr) {
             return nullptr;

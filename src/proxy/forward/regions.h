@@ -48,14 +48,14 @@ namespace bolero {
             }
         }
         shared_ptr<struct Region> hash_dispatch(::leveldb::Slice key);
-        bool insert_region(shared_ptr<struct Region> region);
-        void remove_region(shared_ptr<struct Region> region);
+        bool insert_region(const shared_ptr<struct Region>& region);
+        void remove_region(const shared_ptr<struct Region>& region);
         void reput();
         int pool_size() const {return k_pool_size;}
         void set_hash_handle(dispatch_hash_handle_t handle) { _hash_handle = handle; }
     private:
         uint32_t hash_index(const std::string& region_name);
-        bool insert_callback(shared_ptr<struct Region> region);
+        bool insert_callback(const shared_ptr<struct Region>& region);
 
         class _RegionCompare {
         public:
@@ -75,7 +75,7 @@ namespace bolero {
     };
 
     template <int k_pool_size>
-    bool HashPool<k_pool_size>::insert_callback(shared_ptr<struct Region> region) {
+    bool HashPool<k_pool_size>::insert_callback(const shared_ptr<struct Region>& region) {
         uint32_t hash_pos = _hash_handle({region->name.data(), region->name.length()}) % k_pool_size;
         uint32_t pos = hash_pos % k_pool_size;
         if (_positions[pos].lock() != nullregion() && _positions[pos].lock()->hash_pos == pos) {
@@ -100,20 +100,23 @@ namespace bolero {
     }
 
     template <int k_pool_size>
-    bool HashPool<k_pool_size>::insert_region(shared_ptr<struct Region> region) {
+    bool HashPool<k_pool_size>::insert_region(const shared_ptr<struct Region>& region) {
         _regions.insert(region);
         return insert_callback(region);
     }
 
     template <int k_pool_size>
-    void HashPool<k_pool_size>::remove_region(shared_ptr<struct Region> region) {
+    void HashPool<k_pool_size>::remove_region(const shared_ptr<struct Region>& region) {
         auto iter = _regions.find(region);
         if (iter == _regions.end()) {
             return;
         }
         _regions.erase(iter);
         uint32_t pos = region->hash_pos;
-        struct Region* replace = _positions[(pos + k_pool_size - 1) % k_pool_size];
+        weak_ptr<struct Region> replace = _positions[(pos + k_pool_size - 1) % k_pool_size];
+        if (replace.lock() == region) {
+            replace = nullregion();
+        }
         while (_positions[pos] == region) {
             _positions[pos++] = replace;
             if (pos >= k_pool_size) {

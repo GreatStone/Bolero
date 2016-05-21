@@ -18,11 +18,10 @@ namespace bolero {
         return true;
     }
     bool RpcCenter::hget(leveldb::Slice user_key, leveldb::Slice field,
+                         ::bolero::proto::HashRequest* request,
+                         ::bolero::proto::HashResponse* response,
                          ::google::protobuf::Closure* done,
                          int64_t time_out) {
-        ::bolero::proto::HashRequest* request = new ::bolero::proto::HashRequest;
-        ::bolero::proto::HashResponse* response = new ::bolero::proto::HashResponse;
-
         request->set_operation(::bolero::proto::HashRequest::HGET);
         request->set_user_key(user_key.data(), user_key.size());
         request->set_req_batch(field.data(), field.size());
@@ -30,15 +29,13 @@ namespace bolero {
         ::sofa::pbrpc::RpcController* cntl = new ::sofa::pbrpc::RpcController;
         cntl->SetTimeout(time_out);
         get_stub(forward_center_->dispatch(user_key)->addr)->hash_op(cntl, request, response, done);
-
         return true;
     }
     bool RpcCenter::hset(leveldb::Slice user_key, leveldb::Slice field,
-                         leveldb::Slice value, ::google::protobuf::Closure* done,
+                         leveldb::Slice value, ::bolero::proto::HashRequest* request,
+                         ::bolero::proto::HashResponse* response,
+                         ::google::protobuf::Closure* done,
                          int64_t time_out) {
-        ::bolero::proto::HashRequest* request = new ::bolero::proto::HashRequest;
-        ::bolero::proto::HashResponse* response = new ::bolero::proto::HashResponse;
-
         request->set_operation(::bolero::proto::HashRequest::HSET);
         request->set_user_key(user_key.data(), user_key.size());
 
@@ -49,19 +46,13 @@ namespace bolero {
         ::sofa::pbrpc::RpcController* cntl = new ::sofa::pbrpc::RpcController;
         cntl->SetTimeout(time_out);
         get_stub(forward_center_->dispatch(user_key)->addr)->hash_op(cntl, request, response, done);
-        if (done == nullptr) {
-            delete request;
-            delete response;
-            delete cntl;
-        }
         return true;
     }
     bool RpcCenter::hdel(leveldb::Slice user_key, leveldb::Slice field,
+                         ::bolero::proto::HashRequest* request,
+                         ::bolero::proto::HashResponse* response,
                          ::google::protobuf::Closure* done,
                          int64_t time_out) {
-        ::bolero::proto::HashRequest* request = new ::bolero::proto::HashRequest;
-        ::bolero::proto::HashResponse* response = new ::bolero::proto::HashResponse;
-
         request->set_operation(::bolero::proto::HashRequest::HDEL);
         request->set_user_key(user_key.data(), user_key.size());
         request->set_req_batch(field.data(), field.size());
@@ -69,19 +60,14 @@ namespace bolero {
         ::sofa::pbrpc::RpcController* cntl = new ::sofa::pbrpc::RpcController;
         cntl->SetTimeout(time_out);
         get_stub(forward_center_->dispatch(user_key)->addr)->hash_op(cntl, request, response, done);
-        if (done == nullptr) {
-            delete request;
-            delete response;
-            delete cntl;
-        }
         return true;
     }
-    bool RpcCenter::hmget(leveldb::Slice user_key, const std::vector<leveldb::Slice>& fields,
+    bool RpcCenter::hmget(leveldb::Slice user_key,
+                          const std::vector<leveldb::Slice>& fields,
+                          ::bolero::proto::HashRequest* request,
+                          ::bolero::proto::HashResponse* response,
                           ::google::protobuf::Closure* done,
                           int64_t time_out) {
-        ::bolero::proto::HashRequest* request = new ::bolero::proto::HashRequest;
-        ::bolero::proto::HashResponse* response = new ::bolero::proto::HashResponse;
-
         request->set_operation(::bolero::proto::HashRequest::HMGET);
         request->set_user_key(user_key.data(), user_key.size());
         
@@ -97,20 +83,14 @@ namespace bolero {
         ::sofa::pbrpc::RpcController* cntl = new ::sofa::pbrpc::RpcController;
         cntl->SetTimeout(time_out);
         get_stub(forward_center_->dispatch(user_key)->addr)->hash_op(cntl, request, response, done);
-        if (done == nullptr) {
-            delete request;
-            delete response;
-            delete cntl;
-        }
         return true;
     }
     bool RpcCenter::hmset(leveldb::Slice user_key,
                           const std::vector<std::pair<leveldb::Slice, leveldb::Slice>>& kvs,
+                          ::bolero::proto::HashRequest* request,
+                          ::bolero::proto::HashResponse* response,
                           ::google::protobuf::Closure* done,
                           int64_t time_out) {
-        ::bolero::proto::HashRequest* request = new ::bolero::proto::HashRequest;
-        ::bolero::proto::HashResponse* response = new ::bolero::proto::HashResponse;
-
         request->set_operation(::bolero::proto::HashRequest::HMSET);
         request->set_user_key(user_key.data(), user_key.size());
         
@@ -129,19 +109,14 @@ namespace bolero {
         ::sofa::pbrpc::RpcController* cntl = new ::sofa::pbrpc::RpcController;
         cntl->SetTimeout(time_out);
         get_stub(forward_center_->dispatch(user_key)->addr)->hash_op(cntl, request, response, done);
-        if (done == nullptr) {
-            delete request;
-            delete response;
-            delete cntl;
-        }
         return true;
     }
-    bool RpcCenter::hmdel(leveldb::Slice user_key, const std::vector<leveldb::Slice>& fields,
+    bool RpcCenter::hmdel(leveldb::Slice user_key,
+                          const std::vector<leveldb::Slice>& fields,
+                          ::bolero::proto::HashRequest* request,
+                          ::bolero::proto::HashResponse* response,
                           ::google::protobuf::Closure* done,
                           int64_t time_out) {
-        ::bolero::proto::HashRequest* request = new ::bolero::proto::HashRequest;
-        ::bolero::proto::HashResponse* response = new ::bolero::proto::HashResponse;
-
         request->set_operation(::bolero::proto::HashRequest::HMDEL);
         request->set_user_key(user_key.data(), user_key.size());
         
@@ -157,11 +132,6 @@ namespace bolero {
         ::sofa::pbrpc::RpcController* cntl = new ::sofa::pbrpc::RpcController;
         cntl->SetTimeout(time_out);
         get_stub(forward_center_->dispatch(user_key)->addr)->hash_op(cntl, request, response, done);
-        if (done == nullptr) {
-            delete request;
-            delete response;
-            delete cntl;
-        }
         return true;
     }
     shared_ptr<::bolero::proto::RegionServerProto_Stub> RpcCenter::get_stub(const std::string& addr) {

@@ -1,5 +1,6 @@
 #include "region_server.h"
 
+#include "format.h"
 #include "sofa/pbrpc/pbrpc.h"
 
 namespace bolero {
@@ -142,7 +143,7 @@ namespace bolero {
             }
             field_length = *reinterpret_cast<const int32_t*>(req_buf);
             req_buf += sizeof(int32_t);
-            if (req_buf + field_length > req_buf) {
+            if (req_buf + field_length > req_buf_end) {
                 response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
                 return;
             }
@@ -158,8 +159,13 @@ namespace bolero {
         int32_t length;
         for (std::string e : values) {
             length = e.size();
-            rsp_batch.append(reinterpret_cast<char*>(&length), sizeof(int32_t));
-            rsp_batch += e;
+            if (e[0] == DataType::DATA_HASH){
+                rsp_batch.append(reinterpret_cast<char*>(&length), sizeof(int32_t));
+                rsp_batch += e;
+            } else {
+                length = -1;
+                rsp_batch.append(reinterpret_cast<char*>(&length), sizeof(int32_t));
+            }
         }
         response->set_res_batch(std::move(rsp_batch));
         response->set_err(::bolero::proto::HashResponse::OK);
@@ -188,19 +194,19 @@ namespace bolero {
             }
             field_length = *reinterpret_cast<const int32_t*>(req_buf);
             req_buf += sizeof(int32_t);
-            if (req_buf + field_length > req_buf) {
+            if (req_buf + field_length > req_buf_end) {
                 response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
                 return;
             }
-            req_buf += field_length;
             field_pos = req_buf;
+            req_buf += field_length;
             if (req_buf + sizeof(int32_t) > req_buf_end) {
                 response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
                 return;
             }
             value_length = *reinterpret_cast<const int32_t*>(req_buf);
             req_buf += sizeof(int32_t);
-            if (req_buf + value_length > req_buf) {
+            if (req_buf + value_length > req_buf_end) {
                 response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
                 return;
             }
@@ -236,7 +242,7 @@ namespace bolero {
             }
             field_length = *reinterpret_cast<const int32_t*>(req_buf);
             req_buf += sizeof(int32_t);
-            if (req_buf + field_length > req_buf) {
+            if (req_buf + field_length > req_buf_end) {
                 response->set_err(::bolero::proto::HashResponse::BAD_ARGS);
                 return;
             }
@@ -251,13 +257,10 @@ namespace bolero {
         response->set_err(::bolero::proto::HashResponse::OK);
     }
 
-    typedef std::pair<RegionServer*, std::pair<const ::bolero::proto::HashRequest*, std::pair<::bolero::proto::HashResponse*, ::google::protobuf::Closure*> > > PackedArgs;
-    static void* hash_handle(void* args) {
-        PackedArgs* rargs = reinterpret_cast<PackedArgs*>(args);
-        RegionServer* region = rargs->first;
-        const ::bolero::proto::HashRequest* request = rargs->second.first;
-        ::bolero::proto::HashResponse* response = rargs->second.second.first;
-        google::protobuf::Closure* done = rargs->second.second.second;
+    static void* hash_handle(RegionServer* region,
+                             const ::bolero::proto::HashRequest* request,
+                             ::bolero::proto::HashResponse* response,
+                             google::protobuf::Closure* done) {
         assert(request != nullptr && response != nullptr && done != nullptr);
         switch (request->operation()) {
         case ::bolero::proto::HashRequest::HGET:
@@ -288,7 +291,6 @@ namespace bolero {
             assert(false);
         }
         done->Run();
-        delete rargs;
         return nullptr;
     }
 
@@ -296,20 +298,6 @@ namespace bolero {
                                const ::bolero::proto::HashRequest* request,
                                ::bolero::proto::HashResponse* response,
                                google::protobuf::Closure* done) {
-        sofa::pbrpc::RpcController* cntl =
-            static_cast<sofa::pbrpc::RpcController*>(controller);
-        SLOG(NOTICE, "HashOP(): request message from %s",
-             cntl->RemoteAddress().c_str());
-        pthread_t pid;
-        PackedArgs* arg = new PackedArgs;
-        arg->first = this;
-        arg->second.first = request;
-        arg->second.second.first = response;
-        arg->second.second.second = done;
-        if (pthread_create(&pid, NULL, hash_handle, arg) != 0) {
-            delete arg;
-            SLOG(ERROR, "Fail to create thread. From %s", cntl->RemoteAddress().data());
-            done->Run();
-        }
+        hash_handle(this, request, response, done);
     }
 }//namespace bolero
