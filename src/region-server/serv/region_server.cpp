@@ -8,7 +8,6 @@ namespace bolero {
         if (local_server_ == nullptr) {
             return false;
         }
-        SOFA_PBRPC_SET_LOG_LEVEL(NOTICE);
 
         rpc_server_ = new sofa::pbrpc::RpcServer(options_);
 

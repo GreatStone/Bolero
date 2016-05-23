@@ -3,20 +3,22 @@
 
 #include "zookeeper/zookeeper.h"
 
+#include <pthread.h>
+
 #include <string>
 
-struct ZkRegionServer {
-    std::string region_name = "";
-    int readable:1 = 0;
-    int writable:1 = 0;
-};
-
-template <int HashSize>
-class HashUtil {
- public:
-    
- private:
-    ZkRegionServer* servers[];
-}
+namespace bolero {
+    class RegionConfig;
+    extern bool register_server(const RegionConfig& config);
+    struct ZkRegionServer {
+        zhandle_t* handle;
+        std::string region_name;
+        std::string serv_addr;
+        std::string fs_addr;
+        int readable:1;
+        int writable:1;
+        pthread_mutex_t mutex;
+    };
+}//namespace bolero
 
 #endif //BOLERO_ZK_UTIL_H
