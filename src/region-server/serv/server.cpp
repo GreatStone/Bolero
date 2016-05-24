@@ -40,12 +40,12 @@ namespace bolero {
             s = hget(user_key, field, &cur);
             if (!s.ok()) {
                 if (s.IsNotFound()) {
-                    value->emplace_back(std::string(DataType::DATA_NULL, 1));
+                    value->emplace_back(std::string(1, DataType::DATA_NULL));
                     continue;
                 }
                 return s;
             }
-            value->emplace_back(std::string(DataType::DATA_HASH, 1) + cur);
+            value->emplace_back(std::string(1, DataType::DATA_HASH) + cur);
         }
         return leveldb::Status::OK();
     }

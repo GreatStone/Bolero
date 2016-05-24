@@ -141,8 +141,12 @@ namespace bolero {
 
             sprintf(tmp, "$%d\r\n", length);
             client->write_buffer.append(tmp);
-            std::string data(buf + offset, length);
-            client->write_buffer.append(data);
+            if (length > 0) {
+                std::string data(buf + offset, length);
+                client->write_buffer.append(data);
+                offset += length;
+                client->write_buffer.append("\r\n");
+            }
             cnt += 1;
         }
         if (cnt != fields.size()) {

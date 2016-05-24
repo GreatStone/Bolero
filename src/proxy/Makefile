@@ -18,7 +18,7 @@ TMP_DIR=${WORK_DIR}/temp
 
 LINKER=ar crs
 
-ALL: libproxyrpc.a
+ALL: proxy
 
 %.o:%.cpp
 	@echo "[BUILD " $@ "]"
@@ -41,7 +41,8 @@ libproxyrpc.a: ${OBJ}
 clean:
 	rm ${OBJ} -f
 	rm libproxyrpc.a -f
-	rm test -f
+	rm proxy -f
 
-test: test.cpp libproxyrpc.a
-	${GXX} ${CFLAGS} ${INCLUDE} ${LIBS} ${OBJ} test.cpp libproxyrpc.a -o test
+proxy: proxy.cpp libproxyrpc.a
+	@echo "[BUILD " $@ "]"
+	${GXX} ${CFLAGS} ${INCLUDE} ${LIBS} ${OBJ} proxy.cpp libproxyrpc.a -o proxy

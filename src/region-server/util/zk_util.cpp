@@ -71,7 +71,7 @@ namespace bolero{
         MutexLocking l(&(cur->mutex));
         std::string region_path = config.region_ppath + '/' + config.region_name;
         struct Stat stat;
-        if (!zoo_exists(cur->handle, config.region_ppath.data(), 0, &stat)) {
+        if (ZOK != zoo_exists(cur->handle, config.region_ppath.data(), 0, &stat)) {
             int ret = zoo_create(cur->handle, region_path.data(), config.fs_addr.data(),
                                  config.fs_addr.size(), &ZOO_OPEN_ACL_UNSAFE, 0,
                                  nullptr, -1);

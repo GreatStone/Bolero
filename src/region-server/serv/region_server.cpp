@@ -157,10 +157,10 @@ namespace bolero {
         std::string rsp_batch;
         int32_t length;
         for (std::string e : values) {
-            length = e.size();
+            length = e.size() - 1;
             if (e[0] == DataType::DATA_HASH){
                 rsp_batch.append(reinterpret_cast<char*>(&length), sizeof(int32_t));
-                rsp_batch += e;
+                rsp_batch.append(e.data() + 1, length);
             } else {
                 length = -1;
                 rsp_batch.append(reinterpret_cast<char*>(&length), sizeof(int32_t));
